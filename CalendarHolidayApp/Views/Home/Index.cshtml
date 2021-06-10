@@ -1,0 +1,380 @@
+﻿
+@model List<TblDateHoliday>
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Welcome</h1>
+
+</div>
+<section class="content">
+    <div class="row">
+        <div class="col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Input Date Holiday</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div id="formInputDate"></div>
+                    <br />
+                    <div id="btnSave"></div>
+                    <br />
+                    &nbsp;
+                    <div id="gridContainer"></div>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="box">
+                <div class="box-header with-border">
+                    <h3 class="box-title">Check Date</h3>
+                    <div class="box-tools pull-right">
+                        <button type="button" class="btn btn-box-tool" data-widget="collapse">
+                            <i class="fa fa-minus"></i>
+                        </button>
+                    </div>
+                </div>
+                <div class="box-body">
+                    <div id="formCheckDate"></div>
+                    <br />
+                    <div id="btnCheck"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="loadPanel"></div>
+<div id="PopUpSuccess"></div>
+<script>
+    var _dateNow = new Date();
+    var gridContainer;
+    var dsGridContainer = [];
+    var _validationGroupInput = "InputDateHoliday";
+
+    $(document).ready(function () {
+        var dataSourceGrid = @Html.Raw(Json.Serialize(Model));
+        for (var i = 0; i < dataSourceGrid.length; i++) {
+            dsGridContainer.push(dataSourceGrid[i]);
+        }
+    });
+
+    $(function () {
+        gridContainer = $("#gridContainer").dxDataGrid({
+            dataSource: dsGridContainer,
+            showRowLines: true,
+            rowAlternationEnabled: true,
+            showBorders: true,
+            allowColumnResizing: true,
+            paging: {
+                enabled: false
+            },
+            columns: [
+                {
+                    dataField: "dateHoliday",
+                    caption: "Date",
+                    dataType: "date",
+                    format: "EEEE, dd MMM yyyy",
+                },
+                {
+                    dataField: "name",
+                    caption: "Name",
+                },
+                {
+                    dataField: "isSameDay",
+                    caption: "Is Same Day",
+                }]
+        }).dxDataGrid("instance");
+
+        $("#formInputDate").dxForm({
+            formData: [],
+            readOnly: false,
+            labelLocation: "top",
+            showColonAfterLabel: false,
+            validationGroup: _validationGroupInput,
+            colCount: 3,
+            items: [{
+                dataField: "DateHoliday",
+                label: {
+                    text: "Date Holiday (DD MMM YYYY)",
+                    showColon: false
+                },
+                editorType: "dxDateBox",
+                editorOptions: {
+                    placeholder: "Choose Date",
+                    searchEnabled: true,
+                    elementAttr: {
+                        id: "tbxDateBox"
+                    },
+                    width: "100%",
+                    displayFormat: "dd MMM yyyy",
+                    onValueChanged: function (e) {
+                        ChekingDayDate(e.value);
+                    }
+                },
+                validationRules: [{
+                    type: "required",
+                    message: "Date Holiday Is Required"
+                }]
+            },
+            {
+                dataField: "Name",
+                label: {
+                    text: "Name"
+                },
+                editorType: "dxTextBox",
+                editorOptions: {
+                    placeholder: "Name",
+                    elementAttr: {
+                        id: "txbName"
+                    }
+                },
+                validationRules: [{
+                    type: "required",
+                    message: "Name Is Required"
+                }]
+            },
+            {
+                itemType: "group",
+                colCount: 7,
+                labelLocation: "right",
+                items: [{
+                    colSpan: 4,
+                    dataField: "IsSameDay",
+                    label: {
+                        text: "Is Same Day",
+                        showColon: false
+                    },
+                    editorType: "dxCheckBox",
+                    editorOptions: {
+                        disabled: true,
+                        elementAttr: {
+                            id: "cbxIsSameDay"
+                        }
+                    }
+                }]
+            }
+            ]
+        });
+
+        $("#formCheckDate").dxForm({
+            formData: [],
+            readOnly: false,
+            labelLocation: "top",
+            showColonAfterLabel: false,
+            colCount: 3,
+            items: [
+                {
+                    dataField: "DateCheckStart",
+                    label: {
+                        text: "Start Date (DD MMM YYYY)",
+                        showColon: false
+                    },
+                    editorType: "dxDateBox",
+                    editorOptions: {
+                        placeholder: "Choose Date",
+                        searchEnabled: true,
+                        elementAttr: {
+                            id: "tbxDateStartBox"
+                        },
+                        width: "100%",
+                        displayFormat: "dd MMM yyyy",
+                    },
+                    validationRules: [{
+                        type: "required",
+                        message: "Start Date Is Required"
+                    }]
+                },
+                {
+                    dataField: "DateCheckEnd",
+                    label: {
+                        text: "End Date (DD MMM YYYY)",
+                        showColon: false
+                    },
+                    editorType: "dxDateBox",
+                    editorOptions: {
+                        placeholder: "Choose Date",
+                        searchEnabled: true,
+                        elementAttr: {
+                            id: "tbxDateEndBox"
+                        },
+                        width: "100%",
+                        displayFormat: "dd MMM yyyy",
+                    },
+                    validationRules: [{
+                        type: "required",
+                        message: "End Date Is Required"
+                    }]
+                },
+                {
+                    dataField: "ReturnCountDate",
+                    label: {
+                        text: "Return Value"
+                    },
+                    editorType: "dxTextBox",
+                    editorOptions: {
+                        disabled: true,
+                        placeholder: "",
+                        elementAttr: {
+                            id: "txbReturnValue"
+                        }
+                    }
+                },
+            ]
+        });
+    });
+
+    $(function () {
+        $("#btnSave").dxButton({
+            validationGroup: _validationGroupInput,
+            type: "success",
+            text: "Save",
+            onClick: function (e) {
+                SubmitData();
+            }
+        });
+        $("#btnCheck").dxButton({
+            type: "success",
+            text: "Check",
+            onClick: function (e) {
+                ChekingRangeDate();
+            }
+        });
+
+    });
+
+    function SubmitData() {
+        loadPanel.show().then(function () {
+            var _formData = $("#formInputDate").dxForm("option").formData;
+            var _data = {
+                Id: null,
+                DateHoliday: _formData.DateHoliday,
+                Name: _formData.Name,
+                IsSameDay: _formData.IsSameDay,
+                CreatedDate: _dateNow
+            }
+            console.log(JSON.stringify(_data));
+            $.ajax({
+                contentType: "application/json",
+                url: "/Home/Post",
+                dataType: "json",
+                type: "POST",
+                data: JSON.stringify(_data),
+                success: function (result) {
+                    console.log(result);
+                    if (result.status) {
+                        popUpSuccess();
+                        dsGridContainer = [];
+                        gridContainer.option('dataSource', dsGridContainer);
+                        for (var i = 0; i < result.data.length; i++) {
+                            dsGridContainer.push(result.data[i]);
+                            gridContainer.refresh();
+                        }
+                    } else {
+                        DevExpress.ui.notify(result.messages, 'error', 3000);
+                    }
+                    loadPanel.hide();
+                }
+            })
+        });
+    }
+
+    function ChekingDayDate(e) {
+        var _data = {
+            DateHoliday: e,
+        }
+        $.ajax({
+            contentType: "application/json",
+            url: "/Home/GetDayDate",
+            dataType: "json",
+            type: "POST",
+            data: JSON.stringify(_data),
+            success: function (result) {
+                if (result.status) {
+                    if (result.data == 6 || result.data == 0) {
+                        $("#cbxIsSameDay").dxCheckBox("option", "disabled", false);
+                    }
+                    else {
+                        $("#cbxIsSameDay").dxCheckBox("option","disabled", true);
+                    }
+                } else {
+                    DevExpress.ui.notify(result.messages, 'error', 3000);
+                }
+            }
+        })
+    }
+
+    function ChekingRangeDate() {
+        loadPanel.show().then(function () {
+            var _formData = $("#formCheckDate").dxForm("option").formData;
+            var _data = {
+                StartDate: _formData.DateCheckStart,
+                EndDate: _formData.DateCheckEnd
+            }
+            console.log(JSON.stringify(_data));
+            $.ajax({
+                contentType: "application/json",
+                url: "/Home/ChekingDayDate",
+                dataType: "json",
+                type: "POST",
+                data: JSON.stringify(_data),
+                success: function (result) {
+                    if (result.status) {
+                        $("#txbReturnValue").dxTextBox("option", "value", result.data);
+                    } else {
+                        DevExpress.ui.notify(result.messages, 'error', 3000);
+                    }
+                    loadPanel.hide();
+                }
+            })
+        });
+    }
+
+    function popUpSuccess(data) {
+        var Popup = $("#PopUpSuccess").dxPopup({
+            title: "Notification",
+            width: 290,
+            height: 200,
+            showCloseButton: false,
+            onInitialized: function (e) {
+                e.component.registerKeyHandler("escape", function (arg) {
+                    arg.stopPropagation();
+                })
+            },
+            contentTemplate: function (args) {
+                $(`<p><center><strong>Data saved successfully.</strong></center></p>
+                                   <hr style="margin-top: 25px;">
+                                   <center>
+                                   <div id="btnHidePopupSuccess" ></div>
+                                   </center>`).appendTo(args);
+
+                $('#btnHidePopupSuccess').dxButton({
+                    type: "normal",
+                    text: "Ok",
+                    onClick: function (e) {
+                        hidePopUpSuccess();
+                    }
+                });
+            }
+        }).data("dxPopup");
+        Popup.show();
+    }
+
+    function hidePopUpSuccess() {
+        $("#PopUpSuccess").dxPopup("hide");
+    }
+
+    var loadPanel = $(".loadPanel").dxLoadPanel({
+        shadingColor: "rgba(0,0,0,0.4)",
+        visible: false,
+        showIndicator: true,
+        showPane: true,
+        shading: true,
+        closeOnOutsideClick: false
+    }).dxLoadPanel("instance");
+</script>

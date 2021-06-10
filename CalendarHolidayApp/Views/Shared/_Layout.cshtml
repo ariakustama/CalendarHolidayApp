@@ -1,0 +1,120 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dashboard</title>
+
+    <link rel="stylesheet" href="~/bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="~/font-awesome/css/font-awesome.min.css">
+    <link rel="stylesheet" href="~/dist/css/AdminLTE.min.css">
+    <link rel="stylesheet" href="~/dist/css/skins/_all-skins.min.css">
+
+    <link href="~/css/devextreme/dx.common.css" rel="stylesheet" />
+    <link href="~/css/devextreme/dx.light.css" rel="stylesheet" />
+
+    <script src="~/jquery/dist/jquery.min.js"></script>
+    <script src="~/dist/js/adminlte.min.js"></script>
+
+    <script src="~/js/devextreme/jquery.js"></script>
+    <script src="~/js/devextreme/bootstrap.js"></script>
+
+    <script src="~/js/devextreme/cldr.js"></script>
+    <script src="~/js/devextreme/cldr/event.js"></script>
+    <script src="~/js/devextreme/cldr/supplemental.js"></script>
+    <script src="~/js/devextreme/cldr/unresolved.js"></script>
+
+    <script src="~/js/devextreme/globalize.js"></script>
+    <script src="~/js/devextreme/globalize/message.js"></script>
+    <script src="~/js/devextreme/globalize/number.js"></script>
+    <script src="~/js/devextreme/globalize/currency.js"></script>
+    <script src="~/js/devextreme/globalize/date.js"></script>
+
+    <script src="~/js/devextreme/dx.all.js"></script>
+    <script src="~/js/devextreme/vectormap-data/world.js"></script>
+    <script src="~/js/devextreme/aspnet/dx.aspnet.data.js"></script>
+    <script src="~/js/devextreme/aspnet/dx.aspnet.mvc.js"></script>
+</head>
+<style>
+    .info-box {
+        cursor: pointer;
+    }
+
+    a {
+        color: #000000;
+    }
+
+    a:hover {
+        color: #808080;
+    }
+
+    .dx-datagrid .dx-link {
+        color: #337ab7 !important;
+        text-decoration: none !important;
+        padding: 5px;
+    }
+
+    .dx-editor-cell .dx-checkbox.dx-checkbox-checked .dx-checkbox-icon {
+        border: 1px solid #ddd;
+    }
+
+    .dx-checkbox.dx-state-readonly .dx-checkbox-icon {
+        border: 1px solid #ddd;
+    }
+</style>
+<body class="hold-transition skin-blue sidebar-collapse sidebar-mini">
+    <div class="wrapper">
+        <header class="main-header">
+            <a href="/Home/Index" class="logo">
+                @*<span class="logo-mini"><img src="~/img/iconWedding.png" width="25" height="20" alt="LogoIcon"></span>
+                <span class="logo-lg"><img src="~/img/wedding.png" width="110" height="35" alt="Logo"></span>*@
+                <!-- mini logo for sidebar mini 50x50 pixels -->
+                <span class="logo-mini"><b>A</b>K</span>
+                <!-- logo for regular state and mobile devices -->
+                <span class="logo-lg"><b>Calendar</b>Holiday App</span>
+            </a>
+
+            <nav class="navbar navbar-static-top">
+                <a href="#" class="sidebar-toggle" data-toggle="push-menu" role="button">
+                    <span class="sr-only">Toggle navigation</span>
+                </a>
+                @await Component.InvokeAsync("UserInfo")
+            </nav>
+        </header>
+
+        <aside class="main-sidebar">
+            <section class="sidebar">
+                <ul class="sidebar-menu" data-widget="tree">
+                    @await Component.InvokeAsync("SideBarMenu")
+                </ul>
+            </section>
+        </aside>
+
+        <div class="content-wrapper">
+            <section class="content-header">
+                <ol class="breadcrumb">
+                    @await Component.InvokeAsync("Breadcrumb", ViewBag.Breadcrumb)
+                </ol>
+            </section>
+
+            <section class="content">
+                <div id="PopUpSuccess"></div>
+                <div id="PopUpGagal"></div>
+
+                <div class="row">
+                    @RenderBody()
+                    @RenderSection("scripts", false)
+                </div>
+            </section>
+        </div>
+
+        <footer class="main-footer">
+            <div class="pull-right hidden-xs">
+                <b>Version</b> 1.0.0
+            </div>
+            <strong>Copyright &copy; 2021.</strong>
+        </footer>
+        <div class="control-sidebar-bg"></div>
+    </div>
+</body>
+</html>
