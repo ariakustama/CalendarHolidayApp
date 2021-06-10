@@ -1,4 +1,3 @@
 # CalendarHolidayApp
 
-#db with sql lite
-#ui with devextreme
+#db with sql lite and ui with devextreme
